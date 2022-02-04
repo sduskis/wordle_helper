@@ -1,8 +1,7 @@
-int size = 0
 
 def disallowed = /.*[rismouh].*/
-var green = /^..ea.$/
-Map<String, List<Integer>> yellow = ["a": [1], "t": [0,3], "e": [1]]
+def green = /^..ea.$/
+def yellow = ["a": [1], "t": [0,3], "e": [1]]
 
 def isGood = {
     word ->
@@ -17,28 +16,21 @@ def uniqueLetters = {
             new HashSet<>(word.toList()).size() == word.size();
 }
 
-def perWord = {
-    action -> {
-        new File("wordle_words.txt").withReader {br ->
-            String word
-            while ((word = br.readLine()) != null) {
-                action(word)
-            }
-        }
-    }
-}
+def wordFile = new File("wordle_words.txt")
 
 if (disallowed.isEmpty()) {
     def words = []
-    perWord(word -> {
+    wordFile.eachLine(word -> {
         if (uniqueLetters(word))
             words.add(word)
     })
 
-    println words.size()
-    println words[new java.util.Random().nextInt(words.size())]
+    println "Word Count: ${words.size()}"
+    def randomWordId = new java.util.Random().nextInt(words.size());
+    println "Random Word: ${words[randomWordId]}"
 } else {
-    perWord(word -> {
+    int size = 0
+    wordFile.eachLine(word -> {
         if (isGood(word)) {
             size++
             println word
